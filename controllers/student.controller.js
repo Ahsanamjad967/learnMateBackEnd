@@ -113,7 +113,10 @@ const uploadNotes = asyncHandler(async (req, res) => {
   }
 
   const cloudinaryUrl = await uploadOnCloudinary(req.file.path);
-  const thumbnail=cloudinaryUrl.replace("upload","upload/c_thumb,h_150,w_150,f_jpg")
+  const thumbnail = cloudinaryUrl.replace(
+    "upload",
+    "upload/c_thumb,h_150,w_150,f_jpg"
+  );
 
   const createdNotes = await note.create({
     title,
@@ -121,12 +124,10 @@ const uploadNotes = asyncHandler(async (req, res) => {
     notesUrl: cloudinaryUrl,
     thumbnail,
     price,
-    owner:req.student._id
+    owner: req.student._id,
   });
 
-  
-  res.status(200).json(new ApiResponse(200,{Notes_id:createdNotes._id},))
-  
+  res.status(200).json(new ApiResponse(200, { Notes_id: createdNotes._id }));
 });
 
 module.exports = { register, login, logOut, uploadNotes };
