@@ -5,7 +5,6 @@ const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
 const uploadOnCloudinary = require("../utils/cloudinary");
-const fs = require("fs");
 
 const register = asyncHandler(async (req, res) => {
   const { fullName, universityName, email, password } = req.body;
@@ -30,7 +29,6 @@ const register = asyncHandler(async (req, res) => {
   if (req.file?.path) {
     //req.file is dealed by multer
     cloudinaryUrl = await uploadOnCloudinary(req.file?.path);
-    fs.unlinkSync(req.file?.path);
   }
 
   let createdStudent = await student.create({
@@ -115,7 +113,7 @@ const uploadNotes = asyncHandler(async (req, res) => {
   const cloudinaryUrl = await uploadOnCloudinary(req.file.path);
   const thumbnail = cloudinaryUrl.replace(
     "upload",
-    "upload/c_thumb,h_150,w_150,f_jpg"
+    "upload/c_thumb,h_150,w_150,f_jpg" //embedding the url with transforming parameters to make it a thumbnail
   );
 
   const createdNotes = await note.create({
@@ -126,7 +124,11 @@ const uploadNotes = asyncHandler(async (req, res) => {
     price,
     owner: req.student._id,
   });
-
+  await student.findByIdAndUpdate(
+    req.student._id,
+    { $push: { notes: createdNotes._id } },
+    { new: true }
+  );
   res.status(200).json(new ApiResponse(200, { Notes_id: createdNotes._id }));
 });
 
