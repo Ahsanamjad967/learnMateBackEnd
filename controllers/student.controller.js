@@ -132,26 +132,29 @@ const uploadNotes = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, { Notes_id: createdNotes._id }));
 });
 
-const reviewNotes=asyncHandler(async(req,res)=>{
-  const toBeReviewedNote=await note.findById(req.params.id)
-  console.log(req.body.value)
-  toBeReviewedNote.rating.totalRating+=1
+const reviewNotes = asyncHandler(async (req, res) => {
+  const toBeReviewedNote = await note.findById(req.params.id);
+  toBeReviewedNote.rating.totalRatings += 1;
   toBeReviewedNote.rating.ratingDetails.push({
-    studentID:req.student._id,
+    studentID: req.student._id,
     ratingValue: req.body.value,
-  },)
-  // toBeReviewedNote.rating.average=toBeReviewedNote.rating.ratingDetails.reduce((sum,rating)=>{
-  //   return sum+=rating.ratingValue
-  // })
+  });
+  const totalRatingValue = toBeReviewedNote.rating.ratingDetails.reduce(
+    (sum, rating) => {
+      return (sum += rating.ratingValue);
+    },
+    0
+  );
+  
+  toBeReviewedNote.rating.average =
+    totalRatingValue / toBeReviewedNote.rating.totalRatings;
 
-  const reviewednote=await toBeReviewedNote.save();
+  const reviewednote = await toBeReviewedNote.save();
 
-  res.send(reviewednote)
+  res.send(reviewednote);
+});
 
-
-})
-
-module.exports = { register, login, logOut, uploadNotes,reviewNotes };
+module.exports = { register, login, logOut, uploadNotes, reviewNotes };
 
 /*
 review system not implemented
