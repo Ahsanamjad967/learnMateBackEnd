@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
-
+const ratingDetailSchema = new mongoose.Schema(
+  {
+    studentID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+    },
+    ratingValue: {
+      type: Number,
+    },
+  },
+  { _id: false } // This option disables the _id field for this subdocument schema
+);
 const noteSchema = new mongoose.Schema(
   {
     title: {
@@ -29,17 +40,9 @@ const noteSchema = new mongoose.Schema(
       required: [true, "Price feild is require"],
     },
     rating: {
-      average: Number,
-      totalRatings: Number,
-      ratingDetails: [
-        {
-          studentID: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Student",
-          },
-          ratingValue: Number,
-        },
-      ],
+      average: { type: Number, default: 0 },
+      totalRatings: { type: Number, default: 0 },
+      ratingDetails: [ratingDetailSchema],
 
       //////////todo
     },
@@ -47,4 +50,8 @@ const noteSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+noteSchema.methods.addReview = async function () {
+  this.rating.totalRatings += 1;
+  return await this.save();
+};
 module.exports = mongoose.model("note", noteSchema);
