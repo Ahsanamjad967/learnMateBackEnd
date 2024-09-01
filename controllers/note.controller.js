@@ -19,13 +19,30 @@ const allNotes = asyncHandler(async (req, res) => {
         owner: { $first: "$owner" },
       },
     },
-   
-  ]).limit(1);
+  ]);
   res.send(allNotes);
 });
 
+const recentNotes = asyncHandler(async (req, res) => {
+  let recentNotes = await note
+    .aggregate([
+      {
+        $lookup: {
+          from: "students",
+          localField: "owner",
+          foreignField: "_id",
+          as: "owner",
+          pipeline: [{ $project: { fullName: 1 } }],
+        },
+      },
+      {
+        $addFields: {
+          owner: { $first: "$owner" },
+        },
+      },
+    ])
+    .limit(6);
+  res.send(recentNotes);
+});
 
-
-
-
-module.exports = { allNotes };
+module.exports = { allNotes, recentNotes };

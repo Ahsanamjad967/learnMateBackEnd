@@ -85,7 +85,6 @@ const login = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "logged in Sucessfully"));
 });
 
-const example = asyncHandler(async (req, res) => {});
 
 const logOut = asyncHandler(async (req, res) => {
   //This method is called when the Student is logged in
