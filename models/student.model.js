@@ -29,9 +29,9 @@ const studentSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
-    notes:[{
+    documents:[{
       type:mongoose.Schema.Types.ObjectId,
-      ref:"note"
+      ref:"document"
     }],
     profilePic: String,
   },

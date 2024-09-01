@@ -11,8 +11,13 @@ const ratingDetailSchema = new mongoose.Schema(
   },
   { _id: false } // This option disables the _id field for this subdocument schema
 );
-const noteSchema = new mongoose.Schema(
+const documentSchema = new mongoose.Schema(
   {
+    documentType:{
+      type:String,
+      enum:["book","notes"],
+      required:[true,"document type is required"]
+    },
     title: {
       type: String,
       required: [true, "Title is Required"],
@@ -30,7 +35,7 @@ const noteSchema = new mongoose.Schema(
       ref: "Student",
     },
 
-    notesUrl: { type: String, required: true },
+    documentUrl: { type: String, required: true },
 
     thumbnail: {
       type: String,
@@ -50,8 +55,5 @@ const noteSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-noteSchema.methods.addReview = async function () {
-  this.rating.totalRatings += 1;
-  return await this.save();
-};
-module.exports = mongoose.model("note", noteSchema);
+
+module.exports = mongoose.model("document", documentSchema);

@@ -1,5 +1,5 @@
 const student = require("../models/student.model");
-const note = require("../models/note.model");
+const document = require("../models/document.model");
 
 const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError");
@@ -85,7 +85,6 @@ const login = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "logged in Sucessfully"));
 });
 
-
 const logOut = asyncHandler(async (req, res) => {
   //This method is called when the Student is logged in
   let options = {
@@ -98,7 +97,7 @@ const logOut = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Student Logout Successfully"));
 });
 
-const uploadNotes = asyncHandler(async (req, res) => {
+const uploadDocument = asyncHandler(async (req, res) => {
   const { title, course, price } = req.body;
 
   if (!title || !course || !price) {
@@ -115,48 +114,44 @@ const uploadNotes = asyncHandler(async (req, res) => {
     "upload/c_thumb,h_150,w_150,f_jpg" //embedding the url with transforming parameters to make it a thumbnail
   );
 
-  const createdNotes = await note.create({
+  const createdDocument = await document.create({
     title,
     course,
-    notesUrl: cloudinaryUrl,
+    documentUrl: cloudinaryUrl,
     thumbnail,
     price,
     owner: req.student._id,
   });
   await student.findByIdAndUpdate(
     req.student._id,
-    { $push: { notes: createdNotes._id } },
+    { $push: { documents: createdDocument._id } },
     { new: true }
   );
-  res.status(200).json(new ApiResponse(200, { Notes_id: createdNotes._id }));
+  res
+    .status(200)
+    .json(new ApiResponse(200, { document_id: createdDocument._id }));
 });
 
-const reviewNotes = asyncHandler(async (req, res) => {
-  const toBeReviewedNote = await note.findById(req.params.id);
-  toBeReviewedNote.rating.totalRatings += 1;
-  toBeReviewedNote.rating.ratingDetails.push({
+const reviewDocument = asyncHandler(async (req, res) => {
+  const toBeReviewedDocument = await document.findById(req.params.id);
+  toBeReviewedDocument.rating.totalRatings += 1;
+  toBeReviewedDocument.rating.ratingDetails.push({
     studentID: req.student._id,
     ratingValue: req.body.value,
   });
-  const totalRatingValue = toBeReviewedNote.rating.ratingDetails.reduce(
+  const totalRatingValue = toBeReviewedDocument.rating.ratingDetails.reduce(
     (sum, rating) => {
       return (sum += rating.ratingValue);
     },
     0
   );
-  
-  toBeReviewedNote.rating.average =
-    totalRatingValue / toBeReviewedNote.rating.totalRatings;
 
-  const reviewednote = await toBeReviewedNote.save();
+  toBeReviewedDocument.rating.average =
+    totalRatingValue / toBeReviewedDocument.rating.totalRatings;
 
-  res.send(reviewednote);
+  const reviewedDocument = await toBeReviewedDocument.save();
+
+  res.send(reviewedDocument);
 });
 
-module.exports = { register, login, logOut, uploadNotes, reviewNotes };
-
-/*
-review system not implemented
-price
-
-*/
+module.exports = { register, login, logOut, uploadDocument, reviewDocument };

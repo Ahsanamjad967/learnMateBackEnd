@@ -1,10 +1,10 @@
-const note = require("../models/note.model");
+const document = require("../models/document.model");
 const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
 
-const allNotes = asyncHandler(async (req, res) => {
-  let allNotes = await note.aggregate([
+const allDocuments = asyncHandler(async (req, res) => {
+  let allDocuments = await document.aggregate([
     {
       $lookup: {
         from: "students",
@@ -20,11 +20,11 @@ const allNotes = asyncHandler(async (req, res) => {
       },
     },
   ]);
-  res.send(allNotes);
+  res.send(allDocuments);
 });
 
-const recentNotes = asyncHandler(async (req, res) => {
-  let recentNotes = await note
+const recentDocuments = asyncHandler(async (req, res) => {
+  let recentDocuments = await document
     .aggregate([
       {
         $lookup: {
@@ -42,7 +42,7 @@ const recentNotes = asyncHandler(async (req, res) => {
       },
     ])
     .limit(6);
-  res.send(recentNotes);
+  res.send(recentDocuments);
 });
 
-module.exports = { allNotes, recentNotes };
+module.exports = { allDocuments, recentDocuments };
