@@ -1,7 +1,7 @@
 const express = require("express");
-const { allNotes } = require("../controllers/note.controller");
+const { allDocuments,recentDocuments } = require("../controllers/document.controller");
 const router = express.Router();
 
-router.get("/", recentNotes);
+router.get("/", recentDocuments);
 
 module.exports = router;

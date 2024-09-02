@@ -98,9 +98,9 @@ const logOut = asyncHandler(async (req, res) => {
 });
 
 const uploadDocument = asyncHandler(async (req, res) => {
-  const { title, course, price } = req.body;
+  const { title, course, price, documentType } = req.body;
 
-  if (!title || !course || !price) {
+  if (!title || !course || !price || !documentType) {
     throw new ApiError(403, "All feilds are required");
   }
 
@@ -115,11 +115,13 @@ const uploadDocument = asyncHandler(async (req, res) => {
   );
 
   const createdDocument = await document.create({
+    documentType,
     title,
     course,
     documentUrl: cloudinaryUrl,
     thumbnail,
     price,
+
     owner: req.student._id,
   });
   await student.findByIdAndUpdate(
