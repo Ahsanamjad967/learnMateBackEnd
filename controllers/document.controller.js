@@ -20,7 +20,7 @@ const allDocuments = asyncHandler(async (req, res) => {
       },
     },
   ]);
-  res.send(allDocuments);
+  res.status(200).json(new ApiResponse(200, allDocuments, "success"));
 });
 
 const recentDocuments = asyncHandler(async (req, res) => {
@@ -42,7 +42,17 @@ const recentDocuments = asyncHandler(async (req, res) => {
       },
     ])
     .limit(6);
-  res.send(recentDocuments);
+  res.status(200).json(new ApiResponse(200, recentDocuments, "success"));
 });
 
-module.exports = { allDocuments, recentDocuments };
+const documentById = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const foundDocument = await document
+    .findById(id)
+    .populate("owner", "fullName");
+  res
+    .status(200)
+    .json(new ApiResponse(200, foundDocument, "Found document succesfully"));
+});
+
+module.exports = { allDocuments, recentDocuments, documentById };

@@ -9,7 +9,7 @@ const ratingDetailSchema = new mongoose.Schema(
       type: Number,
     },
   },
-  { _id: false } // This option disables the _id field for this subdocument schema
+  { _id: false } 
 );
 const documentSchema = new mongoose.Schema(
   {

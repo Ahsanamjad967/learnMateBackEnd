@@ -12,7 +12,7 @@ let uploadOnCloudinary = async (localFilePath) => {
   const uploadResult = await cloudinary.uploader
     .upload(localFilePath, {
       resource_type: "raw",
-      invalidate:true
+      invalidate: true,
     })
     .catch((error) => {
       fs.unlinkSync(localFilePath);

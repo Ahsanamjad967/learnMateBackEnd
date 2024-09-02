@@ -153,7 +153,7 @@ const reviewDocument = asyncHandler(async (req, res) => {
 
   const reviewedDocument = await toBeReviewedDocument.save();
 
-  res.send(reviewedDocument);
+  res.status(200).json(new ApiResponse(200, {}, "Review Submitted Sucessfuly"));
 });
 
 module.exports = { register, login, logOut, uploadDocument, reviewDocument };

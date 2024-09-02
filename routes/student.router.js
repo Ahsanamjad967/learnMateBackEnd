@@ -7,14 +7,21 @@ const {
   register,
   logOut,
   uploadDocument,
-  reviewDocument
+  reviewDocument,
 } = require("../controllers/student.controller");
 
 router.post("/register", upload.single("profilePic"), register);
 router.post("/login", login);
-router.post("/upload", verifyJwt, upload.single("documentFile"), uploadDocument);
+router.post(
+  "/upload",
+  verifyJwt,
+  upload.single("documentFile"),
+  uploadDocument
+);
 router.get("/logout", logOut);
-router.post("/review/:id",verifyJwt,reviewDocument)
+router.post("/review/:id", verifyJwt, reviewDocument);
+
+//for tesing purpose only
 router.get("/", verifyJwt, (req, res) => {
   res.send(`logged in user: ${req.student.fullName}`);
 });

@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use("/api/v1/student", studentRouter);
-app.use("/api/v1/Documents", documentRouter);
+app.use("/api/v1/documents", documentRouter);
 
 app.use((err, req, res, next) => {
   if (err instanceof ApiError) {
