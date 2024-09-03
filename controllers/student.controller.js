@@ -134,26 +134,4 @@ const uploadDocument = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { document_id: createdDocument._id }));
 });
 
-const reviewDocument = asyncHandler(async (req, res) => {
-  const toBeReviewedDocument = await document.findById(req.params.id);
-  toBeReviewedDocument.rating.totalRatings += 1;
-  toBeReviewedDocument.rating.ratingDetails.push({
-    studentID: req.student._id,
-    ratingValue: req.body.value,
-  });
-  const totalRatingValue = toBeReviewedDocument.rating.ratingDetails.reduce(
-    (sum, rating) => {
-      return (sum += rating.ratingValue);
-    },
-    0
-  );
-
-  toBeReviewedDocument.rating.average =
-    totalRatingValue / toBeReviewedDocument.rating.totalRatings;
-
-  const reviewedDocument = await toBeReviewedDocument.save();
-
-  res.status(200).json(new ApiResponse(200, {}, "Review Submitted Sucessfuly"));
-});
-
-module.exports = { register, login, logOut, uploadDocument, reviewDocument };
+module.exports = { register, login, logOut, uploadDocument };
