@@ -6,7 +6,8 @@ const {
 } = require("../controllers/document.controller");
 const router = express.Router();
 
-router.get("/", recentDocuments);
+router.get("/", allDocuments);
+router.get("/recentDocuments",recentDocuments)
 router.get("/:id", documentById);
 
 module.exports = router;

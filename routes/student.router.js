@@ -12,12 +12,7 @@ const {
 
 router.post("/register", upload.single("profilePic"), register);
 router.post("/login", login);
-router.post(
-  "/upload",
-  verifyJwt,
-  upload.single("documentFile"),
-  uploadDocument
-);
+router.post("/upload",verifyJwt,upload.single("documentFile"),uploadDocument);
 router.get("/logout", logOut);
 router.post("/review/:id", verifyJwt, reviewDocument);
 

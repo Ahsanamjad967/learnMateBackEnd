@@ -4,22 +4,8 @@ const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
 
 const allDocuments = asyncHandler(async (req, res) => {
-  let allDocuments = await document.aggregate([
-    {
-      $lookup: {
-        from: "students",
-        localField: "owner",
-        foreignField: "_id",
-        as: "owner",
-        pipeline: [{ $project: { fullName: 1 } }],
-      },
-    },
-    {
-      $addFields: {
-        owner: { $first: "$owner" },
-      },
-    },
-  ]);
+  let allDocuments = await document.find({}).populate("owner", "fullName");
+
   res.status(200).json(new ApiResponse(200, allDocuments, "success"));
 });
 
