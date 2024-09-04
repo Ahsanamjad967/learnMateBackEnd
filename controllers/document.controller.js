@@ -55,9 +55,17 @@ const reviewDocument = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, {}, "Review Submitted Sucessfuly"));
 });
 
+const deleteDocument=asyncHandler(async(req,res)=>{
+  const {id}=req.params
+  await document.findOneAndDelete({_id:id})
+  res.status(200).json(new ApiResponse(200,{},"document deleted successfully"))
+
+})
+
 module.exports = {
   allDocuments,
   recentDocuments,
   documentById,
   reviewDocument,
+  deleteDocument
 };

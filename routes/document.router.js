@@ -6,10 +6,13 @@ const {
   recentDocuments,
   documentById,
   reviewDocument,
+  deleteDocument
 } = require("../controllers/document.controller");
 
 router.get("/recentDocuments", recentDocuments);
 router.post("/review/:id", verifyJwt, reviewDocument);
+router.post("/delete/:id", verifyJwt, deleteDocument);
+
 router.get("/:id", documentById);
 router.get("/", allDocuments);
 
