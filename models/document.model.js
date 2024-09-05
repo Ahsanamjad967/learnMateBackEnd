@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const student = require("./student.model");
+
 const ratingDetailSchema = new mongoose.Schema(
   {
     studentID: {
@@ -33,7 +34,7 @@ const documentSchema = new mongoose.Schema(
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
+      ref: "user",
     },
 
     documentUrl: { type: String, required: true },
@@ -58,8 +59,7 @@ const documentSchema = new mongoose.Schema(
 
 documentSchema.pre("findOneAndDelete", async function (next) {
   const toBeDeletedDocument = await this.model.findOne(this.getQuery());
-  console.log(toBeDeletedDocument._id);
-  await student.updateOne(
+  await student.findOneAndUpdate(
     { _id: toBeDeletedDocument.owner },
     { $pull: { documents: toBeDeletedDocument._id } }
   );

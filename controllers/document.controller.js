@@ -10,13 +10,15 @@ const allDocuments = asyncHandler(async (req, res) => {
     query.documentType = documentType;
   }
   //if the url is embedded with the documentType filter i.e books or notes it will filter respectively if not then returns all documents
-  let allDocuments = await document.find(query).populate("owner", "fullName");
+  let allDocuments = await document
+    .find(query, "-rating.ratingDetails")
+    .populate("owner", "fullName");
   res.status(200).json(new ApiResponse(200, allDocuments, "success"));
 });
 
 const recentDocuments = asyncHandler(async (req, res) => {
   let recentDocuments = await document
-    .find({})
+    .find({}, "-rating.ratingDetails")
     .populate("owner", "fullName")
     .limit(6); // only 6 documents are fetched
 
@@ -37,7 +39,7 @@ const reviewDocument = asyncHandler(async (req, res) => {
   const toBeReviewedDocument = await document.findById(req.params.id);
   toBeReviewedDocument.rating.totalRatings += 1;
   toBeReviewedDocument.rating.ratingDetails.push({
-    studentID: req.student._id,
+    studentID: req.user._id,
     ratingValue: req.body.value,
   });
   const totalRatingValue = toBeReviewedDocument.rating.ratingDetails.reduce(
@@ -55,17 +57,27 @@ const reviewDocument = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, {}, "Review Submitted Sucessfuly"));
 });
 
-const deleteDocument=asyncHandler(async(req,res)=>{
-  const {id}=req.params
-  await document.findOneAndDelete({_id:id})
-  res.status(200).json(new ApiResponse(200,{},"document deleted successfully"))
+const deleteDocument = asyncHandler(async (req, res) => {
+  const { id } = req.params;
 
-})
+  try {
+    let documentToBeDeleted = await document.findOneAndDelete({ _id: id });
+    if (!documentToBeDeleted) {
+      throw new ApiError(404, "student not found");
+    }
+  } catch (error) {
+    throw new ApiError(404, "student not found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, "document deleted successfully"));
+});
 
 module.exports = {
   allDocuments,
   recentDocuments,
   documentById,
   reviewDocument,
-  deleteDocument
+  deleteDocument,
 };

@@ -22,4 +22,16 @@ let uploadOnCloudinary = async (localFilePath) => {
   return uploadResult?.secure_url;
 };
 
-module.exports = uploadOnCloudinary;
+let deleteFromCloudinary = async (publicUrl) => {
+  try {
+    const publicId = publicUrl.split("/").pop();
+    const deletedAsset = await cloudinary.uploader.destroy(publicId,{resource_type:"raw"});
+    return deletedAsset
+
+  } catch (error) {
+    throw new ApiError(500,"Something went wrong while uploading file")
+  }
+
+};
+
+module.exports = {uploadOnCloudinary,deleteFromCloudinary};

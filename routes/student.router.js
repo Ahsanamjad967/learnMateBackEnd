@@ -1,26 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../middlewares/multer.middleware");
-const verifyJwt = require("../middlewares/auth.middleware");
-const {
-  login,
-  register,
-  logOut,
-  uploadDocument,
-} = require("../controllers/student.controller");
+const {isLoggedIn,isAuthorized} = require("../middlewares/auth.middleware");
+const {login,register,logOut,uploadDocument, updatePassword, updateProfilePic,} = require("../controllers/student.controller");
 
 router.post("/register", upload.single("profilePic"), register);
 router.post("/login", login);
-router.post(
-  "/upload",
-  verifyJwt,
-  upload.single("documentFile"),
-  uploadDocument
-);
+router.post("/upload",isLoggedIn,upload.single("documentFile"),uploadDocument);
 router.get("/logout", logOut);
+router.get("/updatePassword",isLoggedIn, updatePassword);
+router.post("/updateProfilePic",isLoggedIn,upload.single('profilePic'), updateProfilePic);
 
 //for tesing purpose only
-router.get("/", verifyJwt, (req, res) => {
+router.get("/", isLoggedIn, (req, res) => {
   res.send(`logged in user: ${req.student.fullName}`);
 });
 

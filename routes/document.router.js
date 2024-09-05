@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const verifyJwt = require("../middlewares/auth.middleware");
+const {isLoggedIn,isAuthorized} = require("../middlewares/auth.middleware");
 const {
   allDocuments,
   recentDocuments,
@@ -10,8 +10,8 @@ const {
 } = require("../controllers/document.controller");
 
 router.get("/recentDocuments", recentDocuments);
-router.post("/review/:id", verifyJwt, reviewDocument);
-router.post("/delete/:id", verifyJwt, deleteDocument);
+router.post("/review/:id", isLoggedIn, reviewDocument);
+router.post("/delete/:id", isLoggedIn, deleteDocument);
 
 router.get("/:id", documentById);
 router.get("/", allDocuments);

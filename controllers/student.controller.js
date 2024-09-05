@@ -4,7 +4,10 @@ const document = require("../models/document.model");
 const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
-const uploadOnCloudinary = require("../utils/cloudinary");
+const {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+} = require("../utils/cloudinary");
 
 const register = asyncHandler(async (req, res) => {
   const { fullName, universityName, email, password } = req.body;
@@ -122,10 +125,10 @@ const uploadDocument = asyncHandler(async (req, res) => {
     thumbnail,
     price,
 
-    owner: req.student._id,
+    owner: req.user._id,
   });
   await student.findByIdAndUpdate(
-    req.student._id,
+    req.user._id,
     { $push: { documents: createdDocument._id } },
     { new: true }
   );
@@ -134,4 +137,56 @@ const uploadDocument = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { document_id: createdDocument._id }));
 });
 
-module.exports = { register, login, logOut, uploadDocument };
+const updatePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword) {
+    throw new ApiError(403, "Old password is required");
+  }
+  if (!newPassword) {
+    throw new ApiError(403, "New password is required");
+  }
+
+  const tobeUpdatedStudent = await student.findById(req.user._id);
+  const isOldPasswordCorrect = await tobeUpdatedStudent.isPasswordCorrect(
+    tobeUpdatedStudent.password
+  );
+  if (!isOldPasswordCorrect) {
+    throw new ApiError(400, "Invalid Old Password");
+  }
+
+  tobeUpdatedStudent.password = newPassword;
+  await tobeUpdatedStudent.save({ validateBeforeSave: false });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password changed successfully"));
+});
+
+const updateProfilePic = asyncHandler(async (req, res) => {
+  const newImagePath = req.file?.path;
+  if (!newImagePath) {
+    throw new ApiError(500, "Error while uploading file");
+  }
+
+  const updatedCloudinaryUrl = await uploadOnCloudinary(newImagePath);
+  const currentStudent = await student.findById(req.user._id);
+  const oldCloudinaryUrl = currentStudent.profilePic;
+  currentStudent.profilePic = updatedCloudinaryUrl;
+  await currentStudent.save({ validateBeforeSave: false });
+  if (oldCloudinaryUrl.includes("cloudinary")) {
+    await deleteFromCloudinary(oldCloudinaryUrl);
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, "profile pic updated succesfuly"));
+});
+
+module.exports = {
+  register,
+  login,
+  logOut,
+  uploadDocument,
+  updatePassword,
+  updateProfilePic,
+};
