@@ -148,7 +148,7 @@ const updatePassword = asyncHandler(async (req, res) => {
 
   const tobeUpdatedStudent = await student.findById(req.user._id);
   const isOldPasswordCorrect = await tobeUpdatedStudent.isPasswordCorrect(
-    tobeUpdatedStudent.password
+    oldPassword
   );
   if (!isOldPasswordCorrect) {
     throw new ApiError(400, "Invalid Old Password");

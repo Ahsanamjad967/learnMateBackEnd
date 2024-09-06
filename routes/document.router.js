@@ -10,8 +10,8 @@ const {
 } = require("../controllers/document.controller");
 
 router.get("/recentDocuments", recentDocuments);
-router.post("/review/:id", isLoggedIn, reviewDocument);
-router.post("/delete/:id", isLoggedIn, deleteDocument);
+router.patch("/review/:id", isLoggedIn, reviewDocument);
+router.delete("/delete/:id", isLoggedIn, deleteDocument);
 
 router.get("/:id", documentById);
 router.get("/", allDocuments);

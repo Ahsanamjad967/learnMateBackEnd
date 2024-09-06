@@ -8,8 +8,8 @@ router.post("/register", upload.single("profilePic"), register);
 router.post("/login", login);
 router.post("/upload",isLoggedIn,upload.single("documentFile"),uploadDocument);
 router.get("/logout", logOut);
-router.get("/updatePassword",isLoggedIn, updatePassword);
-router.post("/updateProfilePic",isLoggedIn,upload.single('profilePic'), updateProfilePic);
+router.patch("/updatePassword",isLoggedIn, updatePassword);
+router.patch("/updateProfilePic",isLoggedIn,upload.single('profilePic'), updateProfilePic);
 
 //for tesing purpose only
 router.get("/", isLoggedIn, (req, res) => {

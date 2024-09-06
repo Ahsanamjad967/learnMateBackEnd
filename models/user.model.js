@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const validator = require("validator");
 const userSchema = new mongoose.Schema(
   {
     fullName: {
@@ -15,12 +16,28 @@ const userSchema = new mongoose.Schema(
       required: [true, "Email required"],
       trim: true,
       unique: [true, "Email must be unique"],
+      validate: {
+        validator: validator.isEmail,
+        message: "Please provide a valid email address!",
+      },
       lowercase: true,
     },
     password: {
       type: String,
       required: [true, "Password required"],
       trim: true,
+      minlength: [8, "Password must be at least 8 characters long"],
+      validate: {
+        validator: function (value) {
+          return validator.isStrongPassword(value, {
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols:0}
+          );
+        },
+        message:
+          "Password must contain at least one uppercase letter,one number!",
+      },
     },
     profilePic: String,
   },
