@@ -23,8 +23,9 @@ app.use("/api/v1/documents", documentRouter);
 app.use((err, req, res, next) => {
   if (err instanceof ApiError) {
     console.log(err);
-    res.status(err.statusCode).json(err);
+    res.status(err.statusCode).json(err.message);
   } else {
+
     console.log(err);
     res.status(500).json(err.message);
   }
