@@ -1,6 +1,5 @@
 const student = require("../models/student.model");
 const document = require("../models/document.model");
-
 const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
@@ -155,7 +154,7 @@ const updatePassword = asyncHandler(async (req, res) => {
   }
 
   tobeUpdatedStudent.password = newPassword;
-  await tobeUpdatedStudent.save({ validateBeforeSave: false });
+  await tobeUpdatedStudent.save({ validateBeforeSave: true });
 
   return res
     .status(200)
@@ -182,11 +181,38 @@ const updateProfilePic = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "profile pic updated succesfuly"));
 });
 
+const currentStudentProfile = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    throw new ApiError(400, "No Student Logged In");
+  }
+
+  const currentStudent = await student
+    .findById(req.user._id, "-password ")
+    .populate("documents");
+  res.status(200).json(new ApiResponse(200, currentStudent));
+});
+
+const allStudents = asyncHandler(async (req, res) => {
+  const allStudents = await student.find({}, "fullName email profilePic role");
+  res.status(200).json(new ApiResponse(200, allStudents));
+});
+
+const studentById = asyncHandler(async (req, res) => {
+  const studentById = await student.findById(req.params.id);
+  if (!studentById) {
+    throw new ApiError(400, "student not found");
+  }
+  res.status(200).json(new ApiResponse(200, studentById));
+});
+
 module.exports = {
   register,
   login,
   logOut,
+  currentStudentProfile,
+  allStudents,
   uploadDocument,
   updatePassword,
   updateProfilePic,
+  studentById,
 };
