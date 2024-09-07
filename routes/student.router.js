@@ -15,7 +15,7 @@ const {
 } = require("../controllers/student.controller");
 
 router.post("/register", upload.single("profilePic"), register);
-router.post("/login", login);
+router.post("/login",upload.none(), login);
 router.post(
   "/upload",
   isLoggedIn,
