@@ -8,6 +8,9 @@ const {
   deleteFromCloudinary,
 } = require("../utils/cloudinary");
 
+const sendMail = require('../utils/nodeMailer');
+const generatePassword = require("../utils/randomPasswordGenerator");
+
 const register = asyncHandler(async (req, res) => {
   const { fullName, universityName, email, password } = req.body;
   //checking if any feild is empty if yes then throw error
@@ -205,6 +208,24 @@ const studentById = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, studentById));
 });
 
+const forgetPassword=asyncHandler(async(req,res)=>{
+  const email=req.body.email;
+  if(!email){
+    throw new ApiError(403, "email feild is required");
+  }
+
+  const toBeForgetPasswordStudent=await student.findOne({email})
+
+  if(!toBeForgetPasswordStudent){
+    throw new ApiError(404, "No Student against this email");
+  }
+  const randomPassword=generatePassword()
+  await sendMail(email,"Forget pasword triggered",`<b> ${randomPassword}</b> is your temporary password<br>login and Change it to your desired Password`)
+  toBeForgetPasswordStudent.password=randomPassword
+  toBeForgetPasswordStudent.save();
+  res.status(200).json(new ApiResponse(200,{}))
+
+})
 module.exports = {
   register,
   login,
@@ -215,4 +236,5 @@ module.exports = {
   updatePassword,
   updateProfilePic,
   studentById,
+  forgetPassword
 };

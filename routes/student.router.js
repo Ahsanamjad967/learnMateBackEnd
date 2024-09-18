@@ -11,7 +11,8 @@ const {
   updateProfilePic,
   currentStudentProfile,
   studentById,
-  allStudents
+  allStudents,
+  forgetPassword
 } = require("../controllers/student.controller");
 
 router.post("/register", upload.single("profilePic"), register);
@@ -24,6 +25,7 @@ router.post(
 );
 router.get("/logout", logOut);
 router.patch("/updatePassword", isLoggedIn, updatePassword);
+router.post("/forgetPassword",upload.none(),forgetPassword)
 router.patch(
   "/updateProfilePic",
   isLoggedIn,
@@ -37,5 +39,6 @@ router.get("/:id", isLoggedIn, studentById);
 router.get("/", isLoggedIn, (req, res) => {
   res.send(`logged in user: ${req.student.fullName}`);
 });
+
 
 module.exports = router;
