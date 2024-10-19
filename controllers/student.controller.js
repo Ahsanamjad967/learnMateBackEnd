@@ -196,7 +196,12 @@ const currentStudentProfile = asyncHandler(async (req, res) => {
 });
 
 const allStudents = asyncHandler(async (req, res) => {
-  const allStudents = await student.find({}, "fullName email profilePic role");
+  const query={}
+  const {filter}=req.query
+  if(filter){
+    query.filter=filter
+  }
+  const allStudents = await student.find(query, "fullName email profilePic role");
   res.status(200).json(new ApiResponse(200, allStudents));
 });
 

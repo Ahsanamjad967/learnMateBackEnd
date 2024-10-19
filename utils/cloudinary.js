@@ -1,4 +1,5 @@
 const cloudinary = require("cloudinary").v2;
+const { trusted } = require("mongoose");
 const ApiError = require("./ApiError");
 const fs = require("fs");
 // Configuration
@@ -11,7 +12,7 @@ cloudinary.config({
 let uploadOnCloudinary = async (localFilePath) => {
   const uploadResult = await cloudinary.uploader
     .upload(localFilePath, {
-      resource_type: "raw",
+      resource_type: "auto",
     })
     .catch((error) => {
       fs.unlinkSync(localFilePath);
@@ -23,12 +24,19 @@ let uploadOnCloudinary = async (localFilePath) => {
 
 let deleteFromCloudinary = async (publicUrl) => {
   try {
-    const publicId = publicUrl.split("/").pop();
-    const deletedAsset = await cloudinary.uploader.destroy(publicId,{resource_type:"raw"});
-    return deletedAsset
-
+    const urlParts = publicUrl.split("/");
+    const publicIdWithExtension = urlParts[urlParts.length - 1];
+    if(publicUrl.includes('raw')){
+      return await cloudinary.uploader.destroy(publicIdWithExtension,{resource_type:"raw"});
+    
+    }
+    else{
+    const publicId = publicIdWithExtension.split(".")[0];
+    const deletedAsset = await cloudinary.uploader.destroy(publicId,{resource_type:"image"});
+    return deletedAsset;
+    }
   } catch (error) {
-    throw new ApiError(500,"Something went wrong while uploading file")
+    throw new ApiError(500,error.message)
   }
 
 };

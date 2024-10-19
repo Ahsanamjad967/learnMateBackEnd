@@ -1,0 +1,195 @@
+const ApiError = require("../utils/ApiError");
+const ApiResponse = require("../utils/ApiResponse");
+const asyncHandler = require("../utils/asyncHandler");
+const user = require("../models/user.model");
+const counsellor = require("../models/counsellor.model");
+const {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+} = require("../utils/cloudinary");
+
+const register = asyncHandler(async (req, res) => {
+  const { fullName, email, password } = req.body;
+  if (!fullName || !email || !password) {
+    throw new ApiError(403, "All feilds are required");
+  }
+
+  const alreadyexistuser = await user.findOne({ email });
+
+  if (alreadyexistuser) {
+    throw new ApiError(409, "user with this email already exists");
+  }
+
+  let newCounsellor = new counsellor({
+    fullName,
+    email,
+    password,
+    profilePic: `https://avatar.iran.liara.run/username?username=${fullName}`,
+  });
+  await newCounsellor.validate(["fullName", "email", "password"]);
+  await newCounsellor.save({ validateBeforeSave: false });
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, {}, "counsellor registered successfully"));
+});
+
+const login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw new ApiError(403, "All feilds are required");
+  }
+
+  const toBeloggedInCounsellor = await counsellor.findOne({ email });
+  if (!toBeloggedInCounsellor) {
+    throw new ApiError(401, "No counsellor with such email found!");
+  }
+
+  const isPasswordCorrect = await toBeloggedInCounsellor.isPasswordCorrect(
+    password
+  );
+  if (!isPasswordCorrect) {
+    throw new ApiError(401, "password is incorrect");
+  }
+  let accessToken = "";
+  try {
+    accessToken = toBeloggedInCounsellor.generateAccessToken();
+  } catch (error) {
+    throw new ApiError(500, error.message);
+  }
+  let options = {
+    httpOnly: true,
+    secure: true,
+  };
+  res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .json(new ApiResponse(200, {}, "Logged in Successfully"));
+});
+
+const logOut = asyncHandler(async (req, res) => {
+  res
+    .status(200)
+    .clearCookie("accessToken")
+    .json(new ApiResponse(200, {}, "Counsellor Logout Successfully"));
+});
+
+const postDetails = asyncHandler(async (req, res) => {
+  const { about, degrees, experiences, feild, profession } = req.body;
+  if (!about || !degrees || !experiences || !feild || !profession) {
+    throw new ApiError(409, "All feilds are required");
+  }
+  let newCounsellor = await counsellor.findById(req.user._id, "-password"); //require change
+
+  if (req.files?.profilePic) {
+    let profilePicCloudinaryUrl = await uploadOnCloudinary(
+      req.files.profilePic[0].path
+    );
+    newCounsellor.profilePic = profilePicCloudinaryUrl;
+  }
+  if (req.files?.documents) {
+    const uploadPromise = req.files.documents.map((file) => {
+      return uploadOnCloudinary(file.path);
+    });
+    let allFiles = await Promise.all(uploadPromise);
+    allFiles.forEach((file) => {
+      newCounsellor.referenceDocuments.push(file);
+    });
+  }
+
+  Object.assign(newCounsellor, {
+    about,
+    degrees,
+    experiences,
+    feild,
+    profession,
+  });
+
+  await newCounsellor.save({ validateBeforeSave: true });
+  res
+    .status(201)
+    .json(new ApiResponse(200, {}, "details submitted succcessfully"));
+});
+
+const getCurrentProfile = asyncHandler(async (req, res) => {
+  let user = await counsellor.findById(req.user?._id, ""); //require change
+  if (!user) {
+    throw new ApiError(401, "Unauthorized Access");
+  }
+  res.status(200).json(new ApiResponse(200, user, "User fetched Successfully"));
+});
+
+const updateDetails = asyncHandler(async (req, res) => {
+  const {
+    about,
+    degrees,
+    experiences,
+    feild,
+    profession,
+    deletedReferenceDocuments,
+  } = req.body;
+  if (!about || !degrees || !experiences || !feild || !profession) {
+    throw new ApiError(409, "All feilds are required");
+  }
+  let newCounsellor = await counsellor.findById(req.user._id); //require change
+
+  if (req.files?.profilePic) {
+    let profilePicCloudinaryUrl = await uploadOnCloudinary(
+      req.files.profilePic[0].path
+    );
+    newCounsellor.profilePic = profilePicCloudinaryUrl;
+  }
+  if (req.files?.documents) {
+    const uploadPromise = req.files.documents.map((file) => {
+      return uploadOnCloudinary(file.path);
+    });
+    let allFiles = await Promise.all(uploadPromise);
+    allFiles.forEach((file) => {
+      newCounsellor.referenceDocuments.push(file);
+    });
+  }
+  // https://res.cloudinary.com/di9sthase/image/upload/v1728387802/yds8gcovptwjlf9sdx1l.pdf
+  if (deletedReferenceDocuments) {
+    await Promise.all(
+      deletedReferenceDocuments.map(async (fileUrl) => {
+        newCounsellor.referenceDocuments.splice(
+          newCounsellor.referenceDocuments.indexOf(fileUrl),
+          1
+        );
+        await deleteFromCloudinary(fileUrl);
+      })
+    );
+  }
+  Object.assign(newCounsellor, {
+    about,
+    degrees,
+    experiences,
+    feild,
+    profession,
+  });
+
+  await newCounsellor.save({ validateBeforeSave: true });
+  res.status(201).json(new ApiResponse(200, {}, "user updated succcessfully"));
+});
+
+const allCounsellors = asyncHandler(async (req, res) => {
+  const allCounsellors = await counsellor.find(
+    req.query,
+    "fullName email profilePic role"
+  );
+
+  if (!allCounsellors.length > 0) {
+    throw new ApiError(400, "either the wrong query or no users exist");
+  }
+  res.status(200).json(new ApiResponse(200, allCounsellors));
+});
+
+module.exports = {
+  register,
+  login,
+  logOut,
+  postDetails,
+  updateDetails,
+  getCurrentProfile,
+  allCounsellors,
+};
