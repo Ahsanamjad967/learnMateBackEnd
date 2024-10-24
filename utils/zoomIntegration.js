@@ -16,7 +16,7 @@ async function getAccessToken() {
       headers: {
         Authorization: `Basic ${Buffer.from(
           `${CLIENT_ID}:${CLIENT_SECRET}`
-        ).toString("base64")}`,
+        ).toString("base64")}`, 
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
@@ -28,7 +28,7 @@ async function getAccessToken() {
   }
 }
 
-async function createZoomMeeting(hostEmail, topic, startTime, duration) {
+async function createZoomMeeting(topic, startTime) {
   const token = await getAccessToken();
   const config = {
     headers: {
@@ -41,8 +41,8 @@ async function createZoomMeeting(hostEmail, topic, startTime, duration) {
     topic: topic,
     type: 2,
     start_time: startTime,
-    duration: duration,
-    timezone: "UTC",
+    duration: 60,
+    timezone: "Asia/Tashkent",
     settings: {
       host_video: true,
       participant_video: true,
@@ -53,7 +53,7 @@ async function createZoomMeeting(hostEmail, topic, startTime, duration) {
 
   try {
     const response = await axios.post(
-      `https://api.zoom.us/v2/users/${hostEmail}/meetings`,
+      `https://api.zoom.us/v2/users/studentpaystudent@gmail.com/meetings`,
       meetingDetails,
       config
     );

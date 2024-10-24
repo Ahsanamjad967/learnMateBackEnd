@@ -12,7 +12,8 @@ const {
   currentStudentProfile,
   studentById,
   allStudents,
-  forgetPassword
+  forgetPassword,
+  requestForMeeting
 } = require("../controllers/student.controller");
 
 router.post("/register", upload.single("profilePic"), register);
@@ -34,6 +35,7 @@ router.patch(
 );
 router.get("/currentStudentProfile", isLoggedIn, currentStudentProfile);
 router.get("/allStudents", isLoggedIn, allStudents);
+router.post('/requestForMeeting/:counsellorId',isLoggedIn,requestForMeeting)
 router.get("/:id", isLoggedIn, studentById);
 //for tesing purpose only
 router.get("/", isLoggedIn, (req, res) => {

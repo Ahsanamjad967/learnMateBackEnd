@@ -1,5 +1,6 @@
 const student = require("../models/student.model");
 const document = require("../models/document.model");
+const meeting = require("../models/meeting.model");
 const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
@@ -8,7 +9,7 @@ const {
   deleteFromCloudinary,
 } = require("../utils/cloudinary");
 
-const sendMail = require('../utils/nodeMailer');
+const sendMail = require("../utils/nodeMailer");
 const generatePassword = require("../utils/randomPasswordGenerator");
 
 const register = asyncHandler(async (req, res) => {
@@ -196,12 +197,15 @@ const currentStudentProfile = asyncHandler(async (req, res) => {
 });
 
 const allStudents = asyncHandler(async (req, res) => {
-  const query={}
-  const {filter}=req.query
-  if(filter){
-    query.filter=filter
+  const query = {};
+  const { filter } = req.query;
+  if (filter) {
+    query.filter = filter;
   }
-  const allStudents = await student.find(query, "fullName email profilePic role");
+  const allStudents = await student.find(
+    query,
+    "fullName email profilePic role"
+  );
   res.status(200).json(new ApiResponse(200, allStudents));
 });
 
@@ -213,24 +217,44 @@ const studentById = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, studentById));
 });
 
-const forgetPassword=asyncHandler(async(req,res)=>{
-  const email=req.body.email;
-  if(!email){
+const forgetPassword = asyncHandler(async (req, res) => {
+  const email = req.body.email;
+  if (!email) {
     throw new ApiError(403, "email feild is required");
   }
 
-  const toBeForgetPasswordStudent=await student.findOne({email})
+  const toBeForgetPasswordStudent = await student.findOne({ email });
 
-  if(!toBeForgetPasswordStudent){
+  if (!toBeForgetPasswordStudent) {
     throw new ApiError(404, "No Student against this email");
   }
-  const randomPassword=generatePassword()
-  await sendMail(email,"Forget pasword triggered",`<b> ${randomPassword}</b> is your temporary password<br>login and Change it to your desired Password`)
-  toBeForgetPasswordStudent.password=randomPassword
+  const randomPassword = generatePassword();
+  await sendMail(
+    email,
+    "Forget pasword triggered",
+    `<b> ${randomPassword}</b> is your temporary password<br>login and Change it to your desired Password`
+  );
+  toBeForgetPasswordStudent.password = randomPassword;
   toBeForgetPasswordStudent.save();
-  res.status(200).json(new ApiResponse(200,{}))
+  res.status(200).json(new ApiResponse(200, {}));
+});
 
-})
+const requestForMeeting = asyncHandler(async (req, res) => {
+  if (!req.user?._id) {
+    throw new ApiError(404, "Student not found");
+  }
+  let requestingStudentId = req.user?._id;
+  let { proposedTime } = req.body;
+  let counsellorToBeRequested = req.params?.counsellorId;
+  console.log
+  let newMeeting = await meeting.create({
+    student: requestingStudentId,
+    counsellor: counsellorToBeRequested,
+    proposedTime,
+  });
+
+  res.status(200).json(new ApiResponse(200,{meeting_id:newMeeting._id},"successfully requested a meeting"))
+});
 module.exports = {
   register,
   login,
@@ -241,5 +265,6 @@ module.exports = {
   updatePassword,
   updateProfilePic,
   studentById,
-  forgetPassword
+  forgetPassword,
+  requestForMeeting,
 };

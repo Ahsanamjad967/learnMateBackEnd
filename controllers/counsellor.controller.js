@@ -3,10 +3,13 @@ const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 const user = require("../models/user.model");
 const counsellor = require("../models/counsellor.model");
+const meeting = require("../models/meeting.model");
 const {
   uploadOnCloudinary,
   deleteFromCloudinary,
 } = require("../utils/cloudinary");
+
+const { createZoomMeeting } = require("../utils/zoomIntegration");
 
 const register = asyncHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -75,11 +78,30 @@ const logOut = asyncHandler(async (req, res) => {
 });
 
 const postDetails = asyncHandler(async (req, res) => {
-  const { about, degrees, experiences, feild, profession } = req.body;
-  if (!about || !degrees || !experiences || !feild || !profession) {
+  const {
+    about,
+    degrees,
+    experiences,
+    feild,
+    profession,
+    availableTimes,
+    activeDays,
+  } = req.body;
+  if (
+    !about ||
+    !degrees ||
+    !experiences ||
+    !feild ||
+    !profession ||
+    !availableTimes ||
+    !activeDays
+  ) {
     throw new ApiError(409, "All feilds are required");
   }
-  let newCounsellor = await counsellor.findById(req.user._id, "-password"); //require change
+  let newCounsellor = await counsellor.findById(req.user?._id, "-password");
+  if (!newCounsellor) {
+    throw new ApiError(404, "User not found");
+  }
 
   if (req.files?.profilePic) {
     let profilePicCloudinaryUrl = await uploadOnCloudinary(
@@ -103,6 +125,8 @@ const postDetails = asyncHandler(async (req, res) => {
     experiences,
     feild,
     profession,
+    availableTimes,
+    activeDays,
   });
 
   await newCounsellor.save({ validateBeforeSave: true });
@@ -112,7 +136,7 @@ const postDetails = asyncHandler(async (req, res) => {
 });
 
 const getCurrentProfile = asyncHandler(async (req, res) => {
-  let user = await counsellor.findById(req.user?._id, ""); //require change
+  let user = await counsellor.findById(req.user?._id);
   if (!user) {
     throw new ApiError(401, "Unauthorized Access");
   }
@@ -127,11 +151,21 @@ const updateDetails = asyncHandler(async (req, res) => {
     feild,
     profession,
     deletedReferenceDocuments,
+    availableTimes,
+    activeDays,
   } = req.body;
-  if (!about || !degrees || !experiences || !feild || !profession) {
+  if (
+    !about ||
+    !degrees ||
+    !experiences ||
+    !feild ||
+    !profession ||
+    !availableTimes ||
+    !activeDays
+  ) {
     throw new ApiError(409, "All feilds are required");
   }
-  let newCounsellor = await counsellor.findById(req.user._id); //require change
+  let newCounsellor = await counsellor.findById(req.user?._id);
 
   if (req.files?.profilePic) {
     let profilePicCloudinaryUrl = await uploadOnCloudinary(
@@ -166,6 +200,8 @@ const updateDetails = asyncHandler(async (req, res) => {
     experiences,
     feild,
     profession,
+    availableTimes,
+    activeDays,
   });
 
   await newCounsellor.save({ validateBeforeSave: true });
@@ -184,6 +220,55 @@ const allCounsellors = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, allCounsellors));
 });
 
+const allMeetingRequests = asyncHandler(async (req, res) => {
+  let counsellor = req.user?._id;
+  if (!counsellor) {
+    throw new ApiError(404, "Counsellor Not found");
+  }
+  const allMeetingRequests = await meeting
+    .find(
+      {
+        $and: [{ counsellor }, { approvedByCounsellor: false }],
+      },
+      "-counsellor"
+    )
+    .populate("student", "-password");
+  res
+    .status(200)
+    .json(new ApiResponse(200, allMeetingRequests, "data fetched succesfully"));
+});
+
+const acceptRequest = asyncHandler(async (req, res) => {
+  if (!req.user?._id || !req.params?.id) {
+    throw new ApiError(
+      500,
+      "Cannot accept the meeting! either wrong meeting id or wrong counsellor id"
+    );
+  }
+  const meetingToBeAccepted = await meeting
+    .findOne({ $and: [{ counsellor: req.user._id }, { _id: req.params.id }] })
+    .populate("counsellor student", "fullName");
+
+  if (!meetingToBeAccepted) {
+    throw new ApiError(500, "Something went wrong !");
+  }
+
+  const createdMeeting = await createZoomMeeting(
+    `${meetingToBeAccepted.counsellor.fullName} & ${meetingToBeAccepted.student.fullName} `,
+    `${meetingToBeAccepted.proposedTime}:00`
+  );
+  meetingToBeAccepted.scheduledAt = meetingToBeAccepted.proposedTime;
+  meetingToBeAccepted.joinUrl = createdMeeting.join_url;
+  meetingToBeAccepted.approvedByCounsellor = true;
+  meetingToBeAccepted.meetingId = createdMeeting.id;
+  const acceptedMeeting = await meetingToBeAccepted.save();
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, acceptedMeeting, "Succesfully Accepted meeting")
+    );
+});
+
 module.exports = {
   register,
   login,
@@ -192,4 +277,6 @@ module.exports = {
   updateDetails,
   getCurrentProfile,
   allCounsellors,
+  allMeetingRequests,
+  acceptRequest,
 };

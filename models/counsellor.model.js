@@ -44,14 +44,18 @@ const counsellorSchema = new mongoose.Schema(
       min: [15, "minimum length must be 15"],
     },
     experiences: [experience],
-    degrees:[{type:String}],
-    referenceDocuments:[{type:String,
-      required:true
-    }],
-    
+    degrees: [{ type: String }],
+    referenceDocuments: [{ type: String, required: true }],
 
     isVerified: { type: Boolean, default: false },
-    profileReviewMessage:{type:String}
+    availableTimes: [
+      {
+        from: { type: String, required: true },
+        to: { type: String, required: true },
+      },
+    ],
+    activeDays: [{ type: String }],
+    profileReviewMessage: { type: String },
   },
   { discriminatorKey: "role" }
 );
