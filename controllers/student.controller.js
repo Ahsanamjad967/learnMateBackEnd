@@ -246,15 +246,37 @@ const requestForMeeting = asyncHandler(async (req, res) => {
   let requestingStudentId = req.user?._id;
   let { proposedTime } = req.body;
   let counsellorToBeRequested = req.params?.counsellorId;
-  console.log
   let newMeeting = await meeting.create({
     student: requestingStudentId,
     counsellor: counsellorToBeRequested,
     proposedTime,
   });
 
-  res.status(200).json(new ApiResponse(200,{meeting_id:newMeeting._id},"successfully requested a meeting"))
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { meeting_id: newMeeting._id },
+        "successfully requested a meeting"
+      )
+    );
 });
+
+const allRequestedMeetings = asyncHandler(async (req, res) => {
+  let student = req.user?._id;
+  if (!student) {
+    throw new ApiError(404, "Student Not found");
+  }
+  const allMeetingRequests = await meeting
+    .find({ student, approvedByCounsellor: false }, "-student")
+    .populate("counsellor", "fullName");
+  res
+    .status(200)
+    .json(new ApiResponse(200, allMeetingRequests, "data fetched succesfully"));
+});
+
+const meetingById = asyncHandler(async (req, res) => {});
 module.exports = {
   register,
   login,
@@ -267,4 +289,6 @@ module.exports = {
   studentById,
   forgetPassword,
   requestForMeeting,
+  allRequestedMeetings,
+  meetingById,
 };

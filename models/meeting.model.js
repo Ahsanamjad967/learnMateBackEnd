@@ -7,7 +7,7 @@ const meetingSchema = new mongoose.Schema(
     scheduledAt: String,
     approvedByCounsellor: {type:Boolean,default:false},
     proposedTime: String,
-    responceFromCounsellor: String,
+    responseFromCounsellor: String,
     joinUrl: String,
   },
   { timestamps: true }

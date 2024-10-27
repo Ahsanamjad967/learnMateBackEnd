@@ -9,7 +9,9 @@ const {
   allCounsellors,
   allMeetingRequests,
   acceptRequest,
+  respondToMeeting,
 } = require("../controllers/counsellor.controller");
+const { allScheduledMeetings } = require("../controllers/meeting.controller");
 const { isLoggedIn } = require("../middlewares/auth.middleware");
 const upload = require("../middlewares/multer.middleware");
 
@@ -39,5 +41,7 @@ router.get("/current", isLoggedIn, getCurrentProfile);
 router.get("/allCounsellors", allCounsellors);
 router.get('/allMeetingRequests',isLoggedIn,allMeetingRequests)
 router.put('/acceptRequest/:id',isLoggedIn,acceptRequest)
+router.put('/respondToMeeting/:id',isLoggedIn,respondToMeeting)
+
 
 module.exports = router;

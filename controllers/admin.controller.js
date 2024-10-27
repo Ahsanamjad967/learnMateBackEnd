@@ -92,14 +92,11 @@ const register = asyncHandler(async (req, res) => {
       throw new ApiError(404,"user not found")
     }
     toBeReviewedCounsellor.profileReviewMessage=profileReviewMessage;
-    toBeReviewedCounsellor.save()
+    await toBeReviewedCounsellor.save()
     res.status(200).json(new ApiResponse(200,{},"counsellor review message sent successfully"))
   })
 
-  const generateMeeting = asyncHandler(async (req, res) => { 
-const test=await createZoomMeeting('studentpaystudent@gmail.com','test','2024-10-13T23:59:00+05:00',60)
-
-});
+  
 
 
-module.exports={register,login,verifyCounsellor,sendCounsellorReview,generateMeeting}
+module.exports={register,login,verifyCounsellor,sendCounsellorReview}

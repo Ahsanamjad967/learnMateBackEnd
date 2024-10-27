@@ -226,13 +226,8 @@ const allMeetingRequests = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Counsellor Not found");
   }
   const allMeetingRequests = await meeting
-    .find(
-      {
-        $and: [{ counsellor }, { approvedByCounsellor: false }],
-      },
-      "-counsellor"
-    )
-    .populate("student", "-password");
+    .find({ counsellor, approvedByCounsellor: false }, "-counsellor")
+    .populate("student", "fullName");
   res
     .status(200)
     .json(new ApiResponse(200, allMeetingRequests, "data fetched succesfully"));
@@ -246,14 +241,14 @@ const acceptRequest = asyncHandler(async (req, res) => {
     );
   }
   const meetingToBeAccepted = await meeting
-    .findOne({ $and: [{ counsellor: req.user._id }, { _id: req.params.id }] })
+    .findOne({ counsellor: req.user._id, _id: req.params.id })
     .populate("counsellor student", "fullName");
 
   if (!meetingToBeAccepted) {
     throw new ApiError(500, "Something went wrong !");
   }
 
-  const createdMeeting = await createZoomMeeting(
+const createdMeeting = await createZoomMeeting(
     `${meetingToBeAccepted.counsellor.fullName} & ${meetingToBeAccepted.student.fullName} `,
     `${meetingToBeAccepted.proposedTime}:00`
   );
@@ -261,12 +256,33 @@ const acceptRequest = asyncHandler(async (req, res) => {
   meetingToBeAccepted.joinUrl = createdMeeting.join_url;
   meetingToBeAccepted.approvedByCounsellor = true;
   meetingToBeAccepted.meetingId = createdMeeting.id;
+  meetingToBeAccepted.responseFromCounsellor = "";
   const acceptedMeeting = await meetingToBeAccepted.save();
   res
     .status(200)
     .json(
       new ApiResponse(200, acceptedMeeting, "Succesfully Accepted meeting")
     );
+});
+
+const respondToMeeting = asyncHandler(async (req, res) => {
+  const { responseFromCounsellor } = req.body;
+  if (!req.user?._id || !req.params.id) {
+    throw new ApiError(
+      500,
+      "Cannot accept the meeting! either wrong meeting id or wrong counsellor id"
+    );
+  }
+  const meetingToBeResponded = await meeting.findOne({counsellor: req.user._id ,  _id: req.params.id});
+  if (!meetingToBeResponded) {
+    throw new ApiError(500, "Something went wrong !");
+  }
+
+  meetingToBeResponded.responseFromCounsellor = responseFromCounsellor;
+  const respondedMeeting = await meetingToBeResponded.save();
+  res
+    .status(200)
+    .json(new ApiResponse(200, respondedMeeting, "succesfully sent response"));
 });
 
 module.exports = {
@@ -279,4 +295,5 @@ module.exports = {
   allCounsellors,
   allMeetingRequests,
   acceptRequest,
+  respondToMeeting,
 };
