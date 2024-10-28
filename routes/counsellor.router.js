@@ -10,6 +10,7 @@ const {
   allMeetingRequests,
   acceptRequest,
   respondToMeeting,
+  counsellorById,
 } = require("../controllers/counsellor.controller");
 const { allScheduledMeetings } = require("../controllers/meeting.controller");
 const { isLoggedIn } = require("../middlewares/auth.middleware");
@@ -42,6 +43,7 @@ router.get("/allCounsellors", allCounsellors);
 router.get('/allMeetingRequests',isLoggedIn,allMeetingRequests)
 router.put('/acceptRequest/:id',isLoggedIn,acceptRequest)
 router.put('/respondToMeeting/:id',isLoggedIn,respondToMeeting)
+router.get('/counsellorById/:id',counsellorById)
 
 
 module.exports = router;
