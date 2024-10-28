@@ -211,7 +211,7 @@ const updateDetails = asyncHandler(async (req, res) => {
 const allCounsellors = asyncHandler(async (req, res) => {
   const allCounsellors = await counsellor.find(
     req.query,
-    "fullName email profilePic role"
+    "fullName email profilePic role profession"
   );
 
   if (!allCounsellors.length > 0) {
@@ -285,6 +285,20 @@ const respondToMeeting = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, respondedMeeting, "succesfully sent response"));
 });
 
+const counsellorById=asyncHandler(async(req,res)=>{
+  const {id}=req.params
+  if(!id){
+    throw new ApiError(403,"please specify id ")
+  }
+
+  const counsellorById=await counsellor.findById(id,"-password")
+  if(!counsellorById){
+    throw new ApiError(404,"Counsellor not found")
+  }
+
+  res.status(200).json(new ApiResponse(200,counsellorById,'counsellor fetched succesfully'))
+})
+
 module.exports = {
   register,
   login,
@@ -293,6 +307,7 @@ module.exports = {
   updateDetails,
   getCurrentProfile,
   allCounsellors,
+  counsellorById,
   allMeetingRequests,
   acceptRequest,
   respondToMeeting,
