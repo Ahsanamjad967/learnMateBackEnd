@@ -42,7 +42,7 @@ router.get("/current", isLoggedIn, getCurrentProfile);
 router.get("/allCounsellors", allCounsellors);
 router.get('/allMeetingRequests',isLoggedIn,allMeetingRequests)
 router.put('/acceptRequest/:id',isLoggedIn,acceptRequest)
-router.put('/respondToMeeting/:id',isLoggedIn,respondToMeeting)
+router.put('/respondToMeeting/:id',isLoggedIn,upload.none(),respondToMeeting)
 router.get('/counsellorById/:id',counsellorById)
 
 
