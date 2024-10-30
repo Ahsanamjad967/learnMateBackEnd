@@ -39,6 +39,8 @@ const userSchema = new mongoose.Schema(
           "Password must contain at least one uppercase letter,one number!",
       },
     },
+    passwordResetToken:String,
+    passwordResetExpires:Date,
     profilePic: String,
   },
   {

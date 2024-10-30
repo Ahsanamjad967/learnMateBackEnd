@@ -9,6 +9,22 @@ const experience = new mongoose.Schema(
   },
   { _id: false }
 );
+
+const ratingDetailSchema = new mongoose.Schema(
+  {
+    studentID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "student",
+    },
+    ratingValue: {
+      type: Number,
+    },
+    ratingMessage:{
+      type:String
+    }
+  },
+  { _id: false }
+);
 const counsellorSchema = new mongoose.Schema(
   {
     feild: {
@@ -55,6 +71,11 @@ const counsellorSchema = new mongoose.Schema(
       },
     ],
     activeDays: [{ type: String }],
+    rating: {
+      average: { type: Number, default: 0 },
+      totalRatings: { type: Number, default: 0 },
+      ratingDetails: [ratingDetailSchema],
+    },
     profileReviewMessage: { type: String },
   },
   { discriminatorKey: "role" }
