@@ -12,8 +12,6 @@ const {
   currentStudentProfile,
   studentById,
   allStudents,
-  sendPasswordResetEmail,
-  resetPassword,
   requestForMeeting,
   allRequestedMeetings,
   reviewCounsellor,
@@ -29,8 +27,6 @@ router.post(
 );
 router.get("/logout", logOut);
 router.patch("/updatePassword", isLoggedIn, updatePassword);
-router.post("/requestPasswordReset",upload.none() ,sendPasswordResetEmail);
-router.post("/resetPassword",upload.none(),resetPassword);
 router.patch(
   "/updateProfilePic",
   isLoggedIn,

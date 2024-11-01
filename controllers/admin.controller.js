@@ -96,7 +96,10 @@ const register = asyncHandler(async (req, res) => {
     res.status(200).json(new ApiResponse(200,{},"counsellor review message sent successfully"))
   })
 
-  
+  const getSummary=asyncHandler(async(req,res)=>{
+
+    
+  })
 
 
-module.exports={register,login,verifyCounsellor,sendCounsellorReview}
+module.exports={register,login,verifyCounsellor,sendCounsellorReview,getSummary}

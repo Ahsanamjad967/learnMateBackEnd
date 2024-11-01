@@ -10,10 +10,6 @@ const {
   deleteFromCloudinary,
 } = require("../utils/cloudinary");
 
-const sendMail = require("../utils/nodeMailer");
-const generatePassword = require("../utils/randomPasswordGenerator");
-const crypto = require("crypto");
-
 const register = asyncHandler(async (req, res) => {
   const { fullName, universityName, email, password } = req.body;
   //checking if any feild is empty if yes then throw error
@@ -219,80 +215,6 @@ const studentById = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, studentById));
 });
 
-const sendPasswordResetEmail = asyncHandler(async (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    throw new ApiError(403, "email is required!");
-  }
-
-  const requester = await student.findOne({ email });
-  if (!requester) {
-    throw new ApiError(404, "student with this email is not found");
-  }
-
-  const token = crypto.randomBytes(32).toString("hex");
-  const tokenExpiry = Date.now() + 36000;
-
-  requester.passwordResetToken = token;
-  requester.passwordResetExpires = tokenExpiry;
-  await requester.save();
-  const resetUrl = `http://localhost:3000/reset-password?token=${token}`;
-  try {
-    await sendMail(
-      email,
-      "Password reset Triggered ",
-      `Click here to reset the password: ${resetUrl}`
-    );
-  } catch (error) {
-    throw new ApiError(500, "error sending password reset email");
-  }
-  res
-    .status(200)
-    .json(new ApiResponse(200, "password reset email sent succesfuly"));
-});
-
-const resetPassword = asyncHandler(async (req, res) => {
-  const { newPassword, token } = req.body;
-  if (!token || !newPassword) {
-    throw new ApiError(403, "token or password is missing");
-  }
-
-  const passwordChangeStudent = await student.findOne({
-    passwordResetToken: token,
-  },"password");
-  if (!passwordChangeStudent) {
-    throw new ApiError(401, "wrong token or expired token");
-  }
-
-  passwordChangeStudent.password = newPassword;
-  passwordChangeStudent.passwordResetToken = undefined;
-
-  await passwordChangeStudent.save({ validateBeforeSave: true });
-
-  res.status(200).json(new ApiResponse(200, "password changed succesfully"));
-});
-
-// const forgetPassword = asyncHandler(async (req, res) => {
-//   const email = req.body.email;
-//   if (!email) {
-//     throw new ApiError(403, "email feild is required");
-//   }
-
-//   const toBeForgetPasswordStudent = await student.findOne({ email });
-
-//   if (!toBeForgetPasswordStudent) {
-//     throw new ApiError(404, "No Student against this email");
-//   }
-//   const randomPassword = generatePassword();
-//   await sendMail(
-//     email,
-//     "Forget pasword triggered",
-//     `<b> ${randomPassword}</b> is your temporary password<br>login and Change it to your desired Password`
-//   );
-//   toBeForgetPasswordStudent.password = randomPassword;
-//   toBeForgetPasswordStudent.save();
-//   res.status(200).json(new ApiResponse(200, {}));
-// });
 
 const requestForMeeting = asyncHandler(async (req, res) => {
   if (!req.user?._id) {
@@ -369,7 +291,7 @@ const reviewCounsellor = asyncHandler(async (req, res) => {
   res.send("review sucessfull");
 });
 
-const meetingById = asyncHandler(async (req, res) => {});
+
 module.exports = {
   register,
   login,
@@ -380,10 +302,7 @@ module.exports = {
   updatePassword,
   updateProfilePic,
   studentById,
-  sendPasswordResetEmail,
-  resetPassword,
   requestForMeeting,
   allRequestedMeetings,
-  meetingById,
   reviewCounsellor,
 };
