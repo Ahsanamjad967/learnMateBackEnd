@@ -9,6 +9,6 @@ const {
 
 router.post("/requestPasswordReset", upload.none(), sendPasswordResetEmail);
 router.post("/resetPassword", upload.none(), resetPassword);
-router.patch("/updatePassword", isLoggedIn, updatePassword);
+router.patch("/updatePassword",upload.none(), isLoggedIn, updatePassword);
 
 module.exports = router;
