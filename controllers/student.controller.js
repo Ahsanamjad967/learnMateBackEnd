@@ -138,31 +138,6 @@ const uploadDocument = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { document_id: createdDocument._id }));
 });
 
-const updatePassword = asyncHandler(async (req, res) => {
-  const { oldPassword, newPassword } = req.body;
-  if (!oldPassword) {
-    throw new ApiError(403, "Old password is required");
-  }
-  if (!newPassword) {
-    throw new ApiError(403, "New password is required");
-  }
-
-  const tobeUpdatedStudent = await student.findById(req.user._id);
-  const isOldPasswordCorrect = await tobeUpdatedStudent.isPasswordCorrect(
-    oldPassword
-  );
-  if (!isOldPasswordCorrect) {
-    throw new ApiError(400, "Invalid Old Password");
-  }
-
-  tobeUpdatedStudent.password = newPassword;
-  await tobeUpdatedStudent.save({ validateBeforeSave: true });
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Password changed successfully"));
-});
-
 const updateProfilePic = asyncHandler(async (req, res) => {
   const newImagePath = req.file?.path;
   if (!newImagePath) {
@@ -214,7 +189,6 @@ const studentById = asyncHandler(async (req, res) => {
   }
   res.status(200).json(new ApiResponse(200, studentById));
 });
-
 
 const requestForMeeting = asyncHandler(async (req, res) => {
   if (!req.user?._id) {
@@ -291,7 +265,6 @@ const reviewCounsellor = asyncHandler(async (req, res) => {
   res.send("review sucessfull");
 });
 
-
 module.exports = {
   register,
   login,
@@ -299,7 +272,6 @@ module.exports = {
   currentStudentProfile,
   allStudents,
   uploadDocument,
-  updatePassword,
   updateProfilePic,
   studentById,
   requestForMeeting,

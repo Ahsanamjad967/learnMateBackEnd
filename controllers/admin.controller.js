@@ -2,6 +2,8 @@ const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 const user = require("../models/user.model");
+const document=require('../models/document.model')
+const meeting=require('../models/meeting.model')
 const admin = require("../models/admin.model");
 const {
   uploadOnCloudinary,
@@ -97,9 +99,15 @@ const register = asyncHandler(async (req, res) => {
   })
 
   const getSummary=asyncHandler(async(req,res)=>{
+    const allStudentsCount=user.countDocuments({role:"student"})
+    const allCounsellorsCount=user.countDocuments({role:"counsellor"})
+    const allDocumentsCount=user.countDocuments()
+    const [studentsCount,counsellorsCount,documentsCount]=await Promise.all([allStudentsCount,allCounsellorsCount,allDocumentsCount])
 
     
+    res.status(200).json(new ApiResponse(200,{studentsCount,counsellorsCount,documentsCount},"Success"))
   })
+
 
 
 module.exports={register,login,verifyCounsellor,sendCounsellorReview,getSummary}

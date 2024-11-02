@@ -7,7 +7,6 @@ const {
   register,
   logOut,
   uploadDocument,
-  updatePassword,
   updateProfilePic,
   currentStudentProfile,
   studentById,
@@ -26,7 +25,6 @@ router.post(
   uploadDocument
 );
 router.get("/logout", logOut);
-router.patch("/updatePassword", isLoggedIn, updatePassword);
 router.patch(
   "/updateProfilePic",
   isLoggedIn,

@@ -61,4 +61,32 @@ const resetPassword = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, "password changed succesfully"));
 });
 
-module.exports = { sendPasswordResetEmail, resetPassword };
+const updatePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword) {
+    throw new ApiError(403, "Old password is required");
+  }
+  if (!newPassword) {
+    throw new ApiError(403, "New password is required");
+  }
+
+  const tobeUpdatedUser = await user.findById(req.user._id);
+  if(!tobeUpdatedUser){
+    throw new ApiError(404,"user not found")
+  }
+  const isOldPasswordCorrect = await tobeUpdatedUser.isPasswordCorrect(
+    oldPassword
+  );
+  if (!isOldPasswordCorrect) {
+    throw new ApiError(400, "Invalid Old Password");
+  }
+
+  tobeUpdatedUser.password = newPassword;
+  await tobeUpdatedUser.save({ validateBeforeSave: true });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password changed successfully"));
+});
+
+module.exports = { sendPasswordResetEmail, resetPassword,updatePassword };
