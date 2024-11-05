@@ -27,7 +27,7 @@ const ratingDetailSchema = new mongoose.Schema(
 );
 const counsellorSchema = new mongoose.Schema(
   {
-    feild: {
+    field: {
       type: String,
       lowercase: true,
       enum: [
@@ -46,7 +46,7 @@ const counsellorSchema = new mongoose.Schema(
         "design & architecture",
         "natural sciences",
       ],
-      required: [true, "please specify your feild"],
+      required: [true, "please specify your field"],
     },
     profession: {
       type: String,

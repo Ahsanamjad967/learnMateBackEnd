@@ -14,7 +14,7 @@ const { createZoomMeeting } = require("../utils/zoomIntegration");
 const register = asyncHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
   if (!fullName || !email || !password) {
-    throw new ApiError(403, "All feilds are required");
+    throw new ApiError(403, "All fields are required");
   }
 
   const alreadyexistuser = await user.findOne({ email });
@@ -40,7 +40,7 @@ const register = asyncHandler(async (req, res) => {
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    throw new ApiError(403, "All feilds are required");
+    throw new ApiError(403, "All fields are required");
   }
 
   const toBeloggedInCounsellor = await counsellor.findOne({ email });
@@ -82,7 +82,7 @@ const postDetails = asyncHandler(async (req, res) => {
     about,
     degrees,
     experiences,
-    feild,
+    field,
     profession,
     availableTimes,
     activeDays,
@@ -91,12 +91,12 @@ const postDetails = asyncHandler(async (req, res) => {
     !about ||
     !degrees ||
     !experiences ||
-    !feild ||
+    !field ||
     !profession ||
     !availableTimes ||
     !activeDays
   ) {
-    throw new ApiError(409, "All feilds are required");
+    throw new ApiError(409, "All fields are required");
   }
   let newCounsellor = await counsellor.findById(req.user?._id, "-password");
   if (!newCounsellor) {
@@ -123,7 +123,7 @@ const postDetails = asyncHandler(async (req, res) => {
     about,
     degrees,
     experiences,
-    feild,
+    field,
     profession,
     availableTimes,
     activeDays,
@@ -148,7 +148,7 @@ const updateDetails = asyncHandler(async (req, res) => {
     about,
     degrees,
     experiences,
-    feild,
+    field,
     profession,
     deletedReferenceDocuments,
     availableTimes,
@@ -158,12 +158,12 @@ const updateDetails = asyncHandler(async (req, res) => {
     !about ||
     !degrees ||
     !experiences ||
-    !feild ||
+    !field ||
     !profession ||
     !availableTimes ||
     !activeDays
   ) {
-    throw new ApiError(409, "All feilds are required");
+    throw new ApiError(409, "All fields are required");
   }
   let newCounsellor = await counsellor.findById(req.user?._id);
 
@@ -198,7 +198,7 @@ const updateDetails = asyncHandler(async (req, res) => {
     about,
     degrees,
     experiences,
-    feild,
+    field,
     profession,
     availableTimes,
     activeDays,

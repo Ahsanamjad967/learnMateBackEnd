@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const upload=require('../middlewares/multer.middleware')
+const { isLoggedIn } = require("../middlewares/auth.middleware");
+
 
 const {
   sendPasswordResetEmail,
