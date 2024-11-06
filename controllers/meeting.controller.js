@@ -8,14 +8,12 @@ const allScheduledMeetings = asyncHandler(async (req, res) => {
   let query = { _id: null };
   if (req.user.role === "counsellor") {
     query = { counsellor: req.user._id, approvedByCounsellor: true };
-  } else if (req.user.role === "counsellor") {
+  } else if (req.user.role === "student") {
     query = { student: req.user._id, approvedByCounsellor: true };
   }
-
   const allScheduledMeetings = await meeting
     .find(query)
     .populate("student counsellor", { _id: 0, fullName: 1, role: 0 });
-
   res
     .status(200)
     .json(
@@ -28,18 +26,18 @@ const allScheduledMeetings = asyncHandler(async (req, res) => {
 });
 
 const meetingById = asyncHandler(async (req, res) => {
-  if(!req.params.id){
-    throw new ApiError(403,"please specify id")
+  if (!req.params.id) {
+    throw new ApiError(403, "please specify id");
   }
 
-  const meetingById=await meeting.findById(req.params.id)
-  if(!meetingById){
-    throw new ApiError(404,"meeting not found")
+  const meetingById = await meeting.findById(req.params.id);
+  if (!meetingById) {
+    throw new ApiError(404, "meeting not found");
   }
 
-  res.status(200).json(new ApiResponse(200,meetingById,'meeting fetched succesfully'))
-
+  res
+    .status(200)
+    .json(new ApiResponse(200, meetingById, "meeting fetched succesfully"));
 });
 
-
-module.exports = { allScheduledMeetings,meetingById };
+module.exports = { allScheduledMeetings, meetingById };
