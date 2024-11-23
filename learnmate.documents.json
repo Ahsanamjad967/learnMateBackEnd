@@ -1,0 +1,52 @@
+[{
+  "_id": {
+    "$oid": "672c741fcc3c64e9e4856189"
+  },
+  "documentType": "notes",
+  "title": "linklist and stack",
+  "course": "data structure",
+  "owner": {
+    "$oid": "672c7364cc3c64e9e4856168"
+  },
+  "documentUrl": "https://res.cloudinary.com/di9sthase/image/upload/v1730966560/mjns0ip2lcywwcnsgxdu.pdf",
+  "thumbnail": "https://res.cloudinary.com/di9sthase/image/upload/c_thumb,h_150,w_150,f_jpg/v1730966560/mjns0ip2lcywwcnsgxdu.pdf",
+  "price": 1000,
+  "rating": {
+    "average": 0,
+    "totalRatings": 0,
+    "ratingDetails": []
+  },
+  "createdAt": {
+    "$date": "2024-11-07T08:02:39.869Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-07T08:02:39.869Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "673841a88a5c1beafa84a069"
+  },
+  "documentType": "notes",
+  "title": "operating system",
+  "course": "oop",
+  "owner": {
+    "$oid": "672c7364cc3c64e9e4856168"
+  },
+  "documentUrl": "https://res.cloudinary.com/di9sthase/image/upload/v1731740073/qcg6q0tm3qmtlgz9rhhg.pdf",
+  "thumbnail": "https://res.cloudinary.com/di9sthase/image/upload/c_thumb,h_150,w_150,f_jpg/v1731740073/qcg6q0tm3qmtlgz9rhhg.pdf",
+  "price": 500,
+  "rating": {
+    "average": 0,
+    "totalRatings": 0,
+    "ratingDetails": []
+  },
+  "createdAt": {
+    "$date": "2024-11-16T06:54:32.107Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-16T06:54:32.107Z"
+  },
+  "__v": 0
+}]

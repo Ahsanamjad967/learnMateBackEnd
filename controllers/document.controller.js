@@ -74,7 +74,23 @@ const deleteDocument = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "document deleted successfully"));
 });
 
+const searchDocuments = asyncHandler(async (req, res) => {
+  const query = req.query.q || "";
+
+  const results = await document
+    .find(
+      {
+        title: { $regex: query, $options: "i" },
+      },
+      "-rating.ratingDetails"
+    )
+    .populate("owner", "fullName")
+    .limit(5);
+  res.status(200).json(new ApiResponse(200, results, "success"));
+});
+
 module.exports = {
+  searchDocuments,
   allDocuments,
   recentDocuments,
   documentById,

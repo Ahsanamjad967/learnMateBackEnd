@@ -6,13 +6,14 @@ const {
   recentDocuments,
   documentById,
   reviewDocument,
-  deleteDocument
+  deleteDocument,
+  searchDocuments
 } = require("../controllers/document.controller");
 
 router.get("/recentDocuments", recentDocuments);
 router.patch("/review/:id", isLoggedIn, reviewDocument);
 router.delete("/delete/:id", isLoggedIn, deleteDocument);
-
+router.get('/searchDocuments',searchDocuments)
 router.get("/:id", documentById);
 router.get("/", allDocuments);
 

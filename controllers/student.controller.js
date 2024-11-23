@@ -177,7 +177,7 @@ const allStudents = asyncHandler(async (req, res) => {
   }
   const allStudents = await student.find(
     query,
-    "fullName email profilePic role"
+    "fullName email createdAt"
   );
   res.status(200).json(new ApiResponse(200, allStudents));
 });

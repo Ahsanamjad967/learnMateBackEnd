@@ -1,0 +1,44 @@
+[{
+  "_id": {
+    "$oid": "672c96a8ca5956e5185c5f6a"
+  },
+  "student": {
+    "$oid": "672c7364cc3c64e9e4856168"
+  },
+  "counsellor": {
+    "$oid": "672c74cbcc3c64e9e48561d9"
+  },
+  "approvedByCounsellor": false,
+  "proposedTime": "2024-11-21T17:30",
+  "createdAt": {
+    "$date": "2024-11-07T10:30:00.385Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-07T10:30:00.385Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "672dacda4b32539a9b3191db"
+  },
+  "student": {
+    "$oid": "672d9fd762cbb8f5cf0c8d27"
+  },
+  "counsellor": {
+    "$oid": "672c74cbcc3c64e9e48561d9"
+  },
+  "approvedByCounsellor": true,
+  "proposedTime": "2024-11-20T14:19",
+  "createdAt": {
+    "$date": "2024-11-08T06:16:58.764Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-08T06:17:49.466Z"
+  },
+  "__v": 0,
+  "joinUrl": "https://us05web.zoom.us/j/85472611057?pwd=a1OGTWgZvs68bzS0NI44QFQ5tCGxPu.1",
+  "meetingId": 85472611057,
+  "responseFromCounsellor": "",
+  "scheduledAt": "2024-11-20T14:19"
+}]

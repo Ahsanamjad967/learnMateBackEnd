@@ -1,0 +1,119 @@
+[{
+  "_id": {
+    "$oid": "672c7364cc3c64e9e4856168"
+  },
+  "fullName": "adan",
+  "email": "adanlove230@gmail.com",
+  "password": "$2b$10$sNawkxQ2/GS6O94iyGz4FuTgnSAp7Pt4DWtQ14xmFgOm59Jg6eNvy",
+  "profilePic": "https://avatar.iran.liara.run/username?username=adan",
+  "role": "student",
+  "universityName": "pucit",
+  "documents": [
+    {
+      "$oid": "672c741fcc3c64e9e4856189"
+    },
+    {
+      "$oid": "673841a88a5c1beafa84a069"
+    }
+  ],
+  "createdAt": {
+    "$date": "2024-11-07T07:59:32.900Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-16T06:54:32.360Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "672c74cbcc3c64e9e48561d9"
+  },
+  "fullName": "ahsan",
+  "email": "ahsan@gmail.com",
+  "password": "$2b$10$bOvUEMUviahUCwdyfFPgqekeNsdw.s2/4NE8Wygqi7/OgCPd3KyTq",
+  "profilePic": "https://res.cloudinary.com/di9sthase/image/upload/v1731046517/czzy6emxsmvpcmmb3jp2.jpg",
+  "role": "counsellor",
+  "degrees": [
+    "BSCS",
+    "ICS"
+  ],
+  "referenceDocuments": [
+    "https://res.cloudinary.com/di9sthase/image/upload/v1731046518/qgovb9ysyevqri8xygin.pdf"
+  ],
+  "isVerified": true,
+  "activeDays": [
+    "Tuesday",
+    "Friday"
+  ],
+  "rating": {
+    "average": 0,
+    "totalRatings": 0,
+    "ratingDetails": []
+  },
+  "experiences": [
+    {
+      "company": "Amperor Tech",
+      "designation": "full Stack",
+      "duration": 8
+    }
+  ],
+  "availableTimes": [
+    {
+      "from": "04:00",
+      "to": "04:00",
+      "_id": {
+        "$oid": "672dac754b32539a9b3191a9"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2024-11-07T08:05:31.110Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-23T07:10:34.852Z"
+  },
+  "__v": 1,
+  "about": "good counsellor very hire me kindly i am poor guy.",
+  "field": "arts & humanities",
+  "profession": "cloud computing",
+  "profileReviewMessage": "kindly change your photo"
+},
+{
+  "_id": {
+    "$oid": "672d9fd762cbb8f5cf0c8d27"
+  },
+  "fullName": "studentpay",
+  "email": "studentpaystudent@gmail.com",
+  "password": "$2b$10$2P1VSnY4hAi4QoLO5GWlle1A3ruyL7xQP62qiMR1Pn5ageuVh4bVa",
+  "profilePic": "https://avatar.iran.liara.run/username?username=studentPay",
+  "role": "student",
+  "universityName": "pucit",
+  "documents": [],
+  "createdAt": {
+    "$date": "2024-11-08T05:21:27.960Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-08T06:10:16.684Z"
+  },
+  "__v": 0,
+  "passwordResetExpires": {
+    "$date": "2024-11-08T05:33:34.125Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "673434b9fb1a24a00019dbd9"
+  },
+  "fullName": "shayan",
+  "email": "shayan@gmail.com",
+  "password": "$2b$10$bOvUEMUviahUCwdyfFPgqekeNsdw.s2/4NE8Wygqi7/OgCPd3KyTq",
+  "profilePic": "https://avatar.iran.liara.run/username?username=shayan",
+  "role": "admin",
+  "createdAt": {
+    "$date": "2024-11-13T05:10:17.711Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-13T05:10:17.711Z"
+  },
+  "__v": 0
+}]
