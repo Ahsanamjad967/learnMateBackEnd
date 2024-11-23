@@ -63,7 +63,7 @@ const register = asyncHandler(async (req, res) => {
       throw new ApiError(500, error.message);
     }
     let options = {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
     };
     res
