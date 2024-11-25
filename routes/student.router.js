@@ -10,7 +10,6 @@ const {
   updateProfilePic,
   currentStudentProfile,
   studentById,
-  allStudents,
   requestForMeeting,
   allRequestedMeetings,
   reviewCounsellor,
@@ -32,7 +31,6 @@ router.patch(
   updateProfilePic
 );
 router.get("/currentStudentProfile", isLoggedIn, currentStudentProfile);
-router.get("/allStudents", isLoggedIn, allStudents);
 router.get("/allRequestedMeetings", isLoggedIn, allRequestedMeetings);
 router.put(
   "/reviewCounsellor/:counsellorId",
