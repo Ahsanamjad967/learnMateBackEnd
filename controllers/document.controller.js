@@ -37,10 +37,11 @@ const documentById = asyncHandler(async (req, res) => {
 
 const reviewDocument = asyncHandler(async (req, res) => {
   const toBeReviewedDocument = await document.findById(req.params.id);
+
   toBeReviewedDocument.rating.totalRatings += 1;
   toBeReviewedDocument.rating.ratingDetails.push({
     studentID: req.user._id,
-    ratingValue: req.body.value,
+    ratingValue: Number(req.body.value),
   });
   const totalRatingValue = toBeReviewedDocument.rating.ratingDetails.reduce(
     (sum, rating) => {
