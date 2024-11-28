@@ -72,6 +72,13 @@ const register = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, {}, "Logged in Successfully"));
   });
 
+  const logOut = asyncHandler(async (req, res) => {
+    res
+      .status(200)
+      .clearCookie("accessToken").clearCookie("role")
+      .json(new ApiResponse(200, {}, "Admin Logout Successfully"));
+  });
+
   const verifyCounsellor=asyncHandler(async(req,res)=>{
     const counsellorId=req.params.id
     let counsellorToBeVerified=await counsellor.findById(counsellorId)
@@ -110,4 +117,4 @@ const register = asyncHandler(async (req, res) => {
 
 
 
-module.exports={register,login,verifyCounsellor,sendCounsellorReview,getSummary}
+module.exports={register,login,verifyCounsellor,sendCounsellorReview,getSummary,logOut}

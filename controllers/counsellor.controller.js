@@ -73,7 +73,7 @@ const login = asyncHandler(async (req, res) => {
 const logOut = asyncHandler(async (req, res) => {
   res
     .status(200)
-    .clearCookie("accessToken")
+    .clearCookie("accessToken").clearCookie("role")
     .json(new ApiResponse(200, {}, "Counsellor Logout Successfully"));
 });
 
