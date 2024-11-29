@@ -89,4 +89,13 @@ const updatePassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Password changed successfully"));
 });
 
-module.exports = { sendPasswordResetEmail, resetPassword,updatePassword };
+const contactUs=asyncHandler(async(req,res)=>{
+  const {name,email,subject,message}=req.body
+  if(!name||!email||!subject||!messsage){
+    throw new ApiError(401,"please provide all details")
+  }
+
+  
+})
+
+module.exports = { sendPasswordResetEmail, resetPassword,updatePassword,contactUs };

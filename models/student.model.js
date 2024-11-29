@@ -13,6 +13,9 @@ const studentSchema = new mongoose.Schema({
       ref: "document",
     },
   ],
+  isSubscribed:{type:Boolean,
+    default:false
+  }
 },{discriminatorKey:"role"});
 
 
