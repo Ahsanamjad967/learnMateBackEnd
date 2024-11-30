@@ -12,26 +12,26 @@ const {
 
 const register = asyncHandler(async (req, res) => {
   const { fullName, universityName, email, password } = req.body;
-  //checking if any feild is empty if yes then throw error
+  
   if (
     [fullName, universityName, email, password].some((feild) => {
-      return !feild; //return true if one of feilds is empty
+      return !feild; 
     })
   ) {
     throw new ApiError(403, "All feilds are required");
   }
 
-  // checking if the student with this email already exists if yes then throw error
+
   let alreadyexiststudent = await student.findOne({ email });
 
   if (alreadyexiststudent) {
     throw new ApiError(409, "Student with this email already exists");
   }
 
-  // if there is a file being uploaded ,upload it on cloudinary and remove it from local directory
+  
   let cloudinaryUrl = "";
   if (req.file?.path) {
-    //req.file is dealed by multer
+    
     cloudinaryUrl = await uploadOnCloudinary(req.file?.path);
   }
 
@@ -90,7 +90,7 @@ const login = asyncHandler(async (req, res) => {
 });
 
 const logOut = asyncHandler(async (req, res) => {
-  //This method is called when the Student is logged in
+  
   let options = {
     httpOnly: true,
     secure: true,
@@ -115,7 +115,7 @@ const uploadDocument = asyncHandler(async (req, res) => {
   const cloudinaryUrl = await uploadOnCloudinary(req.file.path);
   const thumbnail = cloudinaryUrl.replace(
     "upload",
-    "upload/c_thumb,h_150,w_150,f_jpg" //embedding the url with transforming parameters to make it a thumbnail
+    "upload/c_thumb,h_150,w_150,f_jpg" 
   );
 
   const createdDocument = await document.create({

@@ -9,7 +9,7 @@ const allDocuments = asyncHandler(async (req, res) => {
   if (documentType) {
     query.documentType = documentType;
   }
-  //if the url is embedded with the documentType filter i.e books or notes it will filter respectively if not then returns all documents
+
   let allDocuments = await document
     .find(query, "-rating.ratingDetails")
     .populate("owner", "fullName");

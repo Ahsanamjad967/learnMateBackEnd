@@ -24,7 +24,7 @@ class ApiError extends Error {
       statusCode: this.statusCode,
       data: this.data,
       success: this.success,
-      message: this.message, // Ensure message is included
+      message: this.message, 
       errors: this.errors,
     };
   }

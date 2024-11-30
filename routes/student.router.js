@@ -45,7 +45,7 @@ router.post(
   requestForMeeting
 );
 router.get("/:id", isLoggedIn, studentById);
-//for tesing purpose only
+
 router.get("/", isLoggedIn, (req, res) => {
   res.send(`logged in user: ${req.student.fullName}`);
 });

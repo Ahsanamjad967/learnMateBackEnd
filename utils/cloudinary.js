@@ -2,7 +2,7 @@ const cloudinary = require("cloudinary").v2;
 const { trusted } = require("mongoose");
 const ApiError = require("./ApiError");
 const fs = require("fs");
-// Configuration
+
 cloudinary.config({
   cloud_name: "di9sthase",
   api_key: "763814351785622",

@@ -51,7 +51,7 @@ const documentSchema = new mongoose.Schema(
       totalRatings: { type: Number, default: 0 },
       ratingDetails: [ratingDetailSchema],
 
-      //////////todo
+      
     },
   },
   { timestamps: true }
