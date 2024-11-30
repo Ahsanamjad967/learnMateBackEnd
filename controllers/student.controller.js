@@ -220,8 +220,8 @@ const allRequestedMeetings = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Student Not found");
   }
   const allMeetingRequests = await meeting
-    .find({ student, approvedByCounsellor: false }, "-student")
-    .populate("counsellor", "fullName");
+    .find({ student, approvedByCounsellor: false })
+    .populate("counsellor student", "fullName");
   res
     .status(200)
     .json(new ApiResponse(200, allMeetingRequests, "data fetched succesfully"));
